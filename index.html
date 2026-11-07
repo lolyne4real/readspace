@@ -272,7 +272,7 @@
       <div id="displayMeta" class="story-meta"></div>
 
       <div id="ttsToolbar" class="tts-toolbar">
-        <button id="btnPlayTTS" class="btn-primary">▶ Đọc Thành Tiếng (Giọng Chuẩn)</button>
+        <button id="btnPlayTTS" class="btn-primary">▶ Đọc Thành Tiếng (Giọng Tiếng Việt)</button>
         <button id="btnStopTTS" style="display: none;">⏹ Dừng</button>
         <div class="control-item">
           <label for="rateSelect">Tốc độ:</label>
@@ -364,9 +364,9 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
 
     let currentFontSize = 18;
     let base64CoverImage = "";
-    
     let activeStory = null;
     let activeChapterIndex = 0;
+    let audioPlayer = null;
 
     const fontSelect = document.getElementById('fontSelect');
     const btnDecreaseFont = document.getElementById('btnDecreaseFont');
@@ -664,46 +664,72 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       showDetail(newStory);
     });
 
-    // --- XỬ LÝ ĐỌC THÀNH TIẾNG (WEB SPEECH SYNTHESIS API MỚI) ---
+    // --- HÀM ĐỌC THÀNH TIẾNG TIẾNG VIỆT CHUẨN TRÊN MỌI TRÌNH DUYỆT (ONLINE AUDIO ENGINE) ---
     function playTTS() {
-      if (!('speechSynthesis' in window)) {
-        alert("Trình duyệt của bạn không hỗ trợ tính năng đọc thành tiếng.");
-        return;
-      }
-
-      window.speechSynthesis.cancel(); // Dừng bài đang đọc dở nếu có
+      stopTTS(); // Dừng nếu đang đọc bài trước
 
       const title = displayTitle.textContent || "";
       const content = displayContent.innerText || "";
-      const fullText = `${title}. ${content}`;
+      const fullText = `${title}. ${content}`.trim();
 
-      if (!fullText.trim()) return;
+      if (!fullText) return;
 
-      const utterance = new SpeechSynthesisUtterance(fullText);
-      utterance.lang = 'vi-VN'; // Cài đặt ngôn ngữ Tiếng Việt
+      // Chia nhỏ đoạn văn theo dấu chấm/dấu xuống dòng để tải audio mượt mà
+      const sentences = fullText.match(/[^.!?\n]+[.!?\n]+/g) || [fullText];
+      let currentIndex = 0;
 
-      // Tự động tìm giọng đọc Tiếng Việt chuẩn nếu máy có sẵn
-      const voices = window.speechSynthesis.getVoices();
-      const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VI'));
-      if (viVoice) utterance.voice = viVoice;
+      function playNextSentence() {
+        if (currentIndex >= sentences.length) {
+          stopTTS();
+          return;
+        }
 
-      utterance.rate = parseFloat(rateSelect.value || "1.0");
+        const text = sentences[currentIndex].trim();
+        if (!text) {
+          currentIndex++;
+          playNextSentence();
+          return;
+        }
 
-      utterance.onend = function() {
-        stopTTS();
-      };
+        const rate = rateSelect.value || "1.0";
+        // Sử dụng Audio Stream API tự động tạo giọng Tiếng Việt mượt mà
+        const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Việt&text=${encodeURIComponent(text)}`;
 
-      utterance.onerror = function() {
-        stopTTS();
-      };
+        audioPlayer = new Audio(audioUrl);
+        audioPlayer.playbackRate = parseFloat(rate);
 
-      window.speechSynthesis.speak(utterance);
+        audioPlayer.onended = () => {
+          currentIndex++;
+          playNextSentence();
+        };
 
+        audioPlayer.onerror = () => {
+          // Dự phòng sang WebSpeechSpeechSynthesis nếu lỗi mạng
+          if ('speechSynthesis' in window) {
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'vi-VN';
+            utter.rate = parseFloat(rate);
+            utter.onend = () => { currentIndex++; playNextSentence(); };
+            window.speechSynthesis.speak(utter);
+          } else {
+            currentIndex++;
+            playNextSentence();
+          }
+        };
+
+        audioPlayer.play().catch(() => stopTTS());
+      }
+
+      playNextSentence();
       btnPlayTTS.style.display = 'none';
       btnStopTTS.style.display = 'inline-block';
     }
 
     function stopTTS() {
+      if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer = null;
+      }
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
@@ -759,8 +785,8 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
     btnPlayTTS.addEventListener('click', playTTS);
     btnStopTTS.addEventListener('click', stopTTS);
     rateSelect.addEventListener('change', () => {
-      if (window.speechSynthesis && window.speechSynthesis.speaking) {
-        playTTS(); // Đọc lại với tốc độ mới
+      if (audioPlayer) {
+        playTTS();
       }
     });
 
