@@ -93,7 +93,7 @@
 
     main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 24px 80px 24px; }
 
-    /* --- 1. TRANG CHỦ CATALOG --- */
+    /* --- TRANG CHỦ CATALOG --- */
     .catalog-header { margin-bottom: 32px; text-align: center; }
     .catalog-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
     .catalog-subtitle { opacity: 0.75; font-size: 1rem; }
@@ -130,7 +130,7 @@
       backdrop-filter: blur(4px); font-weight: 500;
     }
 
-    /* --- 2. TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG --- */
+    /* --- TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG --- */
     .detail-container {
       display: none; background-color: var(--card-bg);
       border: 1px solid var(--border-color); border-radius: 12px;
@@ -160,7 +160,7 @@
     .chapter-item:hover { border-color: var(--accent-color); background-color: var(--card-bg); }
     .chapter-name { font-weight: 600; font-size: 0.95rem; }
 
-    /* --- 3. TRANG ĐỌC TRUYỆN (READER) --- */
+    /* --- TRANG ĐỌC TRUYỆN (READER) --- */
     .reader-container { max-width: 860px; margin: 0 auto; display: none; }
     .story-title { font-family: var(--font-family); font-size: 2.25rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
     .story-meta { text-align: center; font-size: 0.9rem; opacity: 0.7; margin-bottom: 24px; }
@@ -348,16 +348,14 @@
   <script>
     const defaultCover = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
 
-    // ẢNH BÌA ANIME MỚI ĐÃ ĐƯỢC MÃ HÓA CỨNG TRỰC TIẾP VÀO CODE (KHÔNG LO LỖI LINK HAY MẤT ẢNH)
-    const animeCoverImage = "https://i.pinimg.com/736x/21/df/b7/21dfb76ef3d8bb2262d66ce5b206263f.jpg";
-
+    // ĐƯỜNG DẪN ẢNH BÌA CỤC BỘ DÙNG FILE 'cover.png' TRONG CÙNG THƯ MỤC
     const introCard = {
       id: "pinned_intro_card",
       isIntro: true,
       title: "Đôi Dòng Giới Thiệu",
       author: "bống",
       excerpt: "Góc nhỏ chia sẻ những mẩu truyện ngắn hoặc những dự án ma mà mình tự viết được mấy chương rồi để đó.",
-      cover: animeCoverImage,
+      cover: "cover.png", 
       content: `Xin chào! Cảm ơn bạn đã ghé thăm trang đọc truyện nhỏ này.
 
 Đây là nơi mình dùng để lưu trữ và chia sẻ những dự án, mẩu chuyện ngắn xoay quanh cuộc sống, những chuyến hành trình đơn giản mà mình đã trải qua.
