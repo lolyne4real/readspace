@@ -348,7 +348,6 @@
   <script>
     const defaultCover = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
 
-    // ĐƯỜNG DẪN ẢNH BÌA CỤC BỘ DÙNG FILE 'cover.png' TRONG CÙNG THƯ MỤC
     const introCard = {
       id: "pinned_intro_card",
       isIntro: true,
@@ -364,7 +363,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
     };
 
     let currentFontSize = 18;
-    let audioPlayer = null;
     let base64CoverImage = "";
     
     let activeStory = null;
@@ -666,39 +664,49 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       showDetail(newStory);
     });
 
+    // --- XỬ LÝ ĐỌC THÀNH TIẾNG (WEB SPEECH SYNTHESIS API MỚI) ---
     function playTTS() {
-      const title = displayTitle.textContent;
-      const content = displayContent.innerText;
-      const fullText = `${title}. ${content}`;
-      if (!fullText.trim()) return;
-
-      const textChunks = fullText.match(/[^.!?\n]+[.!?\n]+/g) || [fullText];
-      let currentChunkIndex = 0;
-
-      if (audioPlayer) audioPlayer.pause();
-
-      function playNextChunk() {
-        if (currentChunkIndex >= textChunks.length) { stopTTS(); return; }
-        const chunk = textChunks[currentChunkIndex].trim();
-        if (!chunk) { currentChunkIndex++; playNextChunk(); return; }
-
-        const rate = rateSelect.value || "1.0";
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunk)}&tl=vi&client=tw-ob`;
-
-        audioPlayer = new Audio(url);
-        audioPlayer.playbackRate = parseFloat(rate);
-        audioPlayer.onended = () => { currentChunkIndex++; playNextChunk(); };
-        audioPlayer.onerror = () => { currentChunkIndex++; playNextChunk(); };
-        audioPlayer.play().catch(() => stopTTS());
+      if (!('speechSynthesis' in window)) {
+        alert("Trình duyệt của bạn không hỗ trợ tính năng đọc thành tiếng.");
+        return;
       }
 
-      playNextChunk();
+      window.speechSynthesis.cancel(); // Dừng bài đang đọc dở nếu có
+
+      const title = displayTitle.textContent || "";
+      const content = displayContent.innerText || "";
+      const fullText = `${title}. ${content}`;
+
+      if (!fullText.trim()) return;
+
+      const utterance = new SpeechSynthesisUtterance(fullText);
+      utterance.lang = 'vi-VN'; // Cài đặt ngôn ngữ Tiếng Việt
+
+      // Tự động tìm giọng đọc Tiếng Việt chuẩn nếu máy có sẵn
+      const voices = window.speechSynthesis.getVoices();
+      const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VI'));
+      if (viVoice) utterance.voice = viVoice;
+
+      utterance.rate = parseFloat(rateSelect.value || "1.0");
+
+      utterance.onend = function() {
+        stopTTS();
+      };
+
+      utterance.onerror = function() {
+        stopTTS();
+      };
+
+      window.speechSynthesis.speak(utterance);
+
       btnPlayTTS.style.display = 'none';
       btnStopTTS.style.display = 'inline-block';
     }
 
     function stopTTS() {
-      if (audioPlayer) { audioPlayer.pause(); audioPlayer = null; }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
       btnPlayTTS.style.display = 'inline-block';
       btnStopTTS.style.display = 'none';
     }
@@ -750,6 +758,12 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
 
     btnPlayTTS.addEventListener('click', playTTS);
     btnStopTTS.addEventListener('click', stopTTS);
+    rateSelect.addEventListener('change', () => {
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        playTTS(); // Đọc lại với tốc độ mới
+      }
+    });
+
     btnScrollTop.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
     window.addEventListener('DOMContentLoaded', loadStoryFromURL);
