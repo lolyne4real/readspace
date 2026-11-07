@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ReadSpace</title>
   
-  <!-- Cấu hình Google Fonts chống lỗi HTTPS GitHub Pages -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
@@ -94,7 +93,7 @@
 
     main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 24px 80px 24px; }
 
-    /* --- 1. TRANG CHỦ CATALOG (DẠNG THẺ TRUYỆN) --- */
+    /* --- 1. TRANG CHỦ CATALOG --- */
     .catalog-header { margin-bottom: 32px; text-align: center; }
     .catalog-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
     .catalog-subtitle { opacity: 0.75; font-size: 1rem; }
@@ -112,6 +111,7 @@
       display: flex; flex-direction: column;
       box-shadow: var(--shadow);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
     }
     .story-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
     .card-cover { width: 100%; height: 200px; object-fit: cover; background-color: var(--border-color); }
@@ -121,6 +121,14 @@
     .card-excerpt {
       font-size: 0.875rem; line-height: 1.5; opacity: 0.85; margin-bottom: 16px; flex: 1;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* Tag ghim đầu trang */
+    .pinned-badge {
+      position: absolute; top: 10px; right: 10px;
+      background-color: rgba(0, 0, 0, 0.65); color: #fff;
+      font-size: 0.75rem; padding: 4px 8px; border-radius: 4px;
+      backdrop-filter: blur(4px); font-weight: 500;
     }
 
     /* --- 2. TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG --- */
@@ -229,7 +237,7 @@
   </header>
 
   <main>
-    <!-- 1. TRANG CHỦ CATALOG (Lưới các Thẻ Truyện) -->
+    <!-- 1. TRANG CHỦ CATALOG -->
     <div id="catalogView">
       <div class="catalog-header">
         <h1 class="catalog-title">Tủ Truyện</h1>
@@ -238,7 +246,7 @@
       <div id="storyGrid" class="story-grid"></div>
     </div>
 
-    <!-- 2. TRANG CHI TIẾT TÁC PHẨM (Thông tin + Danh sách chương) -->
+    <!-- 2. TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG -->
     <div id="detailView" class="detail-container">
       <div class="detail-header-layout">
         <div class="detail-cover-box">
@@ -346,26 +354,20 @@
   <script>
     const defaultCover = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
 
-    // DỮ LIỆU THẺ MẶC ĐỊNH TRÊN TRANG CHỦ
-    const defaultCatalog = [
-      {
-        id: "default_intro_card",
-        title: "Đôi Dòng Giới Thiệu",
-        author: "bống",
-        excerpt: "Góc nhỏ chia sẻ những mẩu truyện ngắn hoặc những dự án ma mà mình tự viết được mấy chương rồi để đó.",
-        cover: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
-        chapters: [
-          {
-            title: "Chương 1: Lời Chào Đầu",
-            content: `Xin chào! Cảm ơn bạn đã ghé thăm trang đọc truyện nhỏ này.
+    // CARD GIỚI THIỆU ĐƯỢC GHIM CỐ ĐỊNH Ở ĐẦU TRANG CHỦ
+    const introCard = {
+      id: "pinned_intro_card",
+      isIntro: true,
+      title: "Đôi Dòng Giới Thiệu",
+      author: "bống",
+      excerpt: "Góc nhỏ chia sẻ những mẩu truyện ngắn hoặc những dự án ma mà mình tự viết được mấy chương rồi để đó.",
+      cover: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
+      content: `Xin chào! Cảm ơn bạn đã ghé thăm trang đọc truyện nhỏ này.
 
 Đây là nơi mình dùng để lưu trữ và chia sẻ những dự án, mẩu chuyện ngắn xoay quanh cuộc sống, những chuyến hành trình đơn giản mà mình đã trải qua.
 
 Trang web được thiết kế tối giản, tập trung hoàn toàn vào trải nghiệm đọc thoáng đãng, hỗ trợ chuyển màu nền dịu mắt và đọc thành tiếng. Chúc bạn có những phút giây đọc truyện thật thoải mái!`
-          }
-        ]
-      }
-    ];
+    };
 
     let currentFontSize = 18;
     let audioPlayer = null;
@@ -431,32 +433,37 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       }
     });
 
-    function getStoredCatalog() {
-      const stored = localStorage.getItem('user_catalog_stories_v3');
+    function getStoredUserStories() {
+      const stored = localStorage.getItem('user_created_stories_v4');
       if (stored) {
         try { return JSON.parse(stored); } catch (e) {}
       }
-      return defaultCatalog;
+      return [];
     }
 
-    function saveToCatalog(storyObj) {
-      const catalog = getStoredCatalog();
-      catalog.unshift(storyObj);
-      localStorage.setItem('user_catalog_stories_v3', JSON.stringify(catalog));
+    function saveUserStory(storyObj) {
+      const stories = getStoredUserStories();
+      stories.unshift(storyObj);
+      localStorage.setItem('user_created_stories_v4', JSON.stringify(stories));
       renderCatalog();
     }
 
-    // Hiển thị Lưới Thẻ Truyện trên Trang Chủ
+    // Render Trang Chủ: Card Giới thiệu luôn đứng đầu tiên + Các truyện đã tạo bên cạnh
     function renderCatalog() {
-      const catalog = getStoredCatalog();
+      const userStories = getStoredUserStories();
+      const allStories = [introCard, ...userStories];
+
       storyGrid.innerHTML = "";
 
-      catalog.forEach((item) => {
+      allStories.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'story-card';
         const coverSrc = item.cover || defaultCover;
 
+        const badgeHtml = item.isIntro ? `<div class="pinned-badge">📌 Ghim</div>` : '';
+
         card.innerHTML = `
+          ${badgeHtml}
           <img src="${escapeHtml(coverSrc)}" class="card-cover" alt="Bìa truyện">
           <div class="card-body">
             <h3 class="card-title">${escapeHtml(item.title)}</h3>
@@ -467,14 +474,48 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
         `;
 
         card.querySelector('.btn-read-card').addEventListener('click', () => {
-          showDetail(item);
+          if (item.isIntro) {
+            // NẾU LÀ CARD GIỚI THIỆU: Mở thẳng trang đọc trực tiếp
+            openIntroDirectly();
+          } else {
+            // NẾU LÀ TRUYỆN MỚI: Mở Trang thông tin chi tiết tác phẩm (Trang thứ 2)
+            showDetail(item);
+          }
         });
 
         storyGrid.appendChild(card);
       });
     }
 
-    // 1. TRANG CHI TIẾT TÁC PHẨM (Trang Thứ 2)
+    // Đọc trực tiếp bài Giới Thiệu
+    function openIntroDirectly() {
+      activeStory = introCard;
+      catalogView.style.display = 'none';
+      detailView.style.display = 'none';
+      readerView.style.display = 'block';
+
+      btnHome.style.display = 'inline-block';
+      btnBackToDetail.style.display = 'none';
+      btnShare.style.display = 'inline-block';
+
+      displayTitle.textContent = introCard.title;
+      displayMeta.textContent = `Tác giả: ${introCard.author}`;
+
+      const paragraphs = introCard.content.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+      displayContent.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+
+      btnPrevChapter.style.visibility = 'hidden';
+      btnNextChapter.style.visibility = 'hidden';
+
+      readerView.style.setProperty('--font-family', fontSelect.value);
+      stopTTS();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const shareUrl = generateShareableURL(introCard, 'intro');
+      window.history.pushState(null, null, shareUrl);
+    }
+
+    // TRANG HỒ SƠ CHI TIẾT TÁC PHẨM (Trang thứ 2 dành cho truyện tạo mới)
     function showDetail(storyData) {
       activeStory = storyData;
       catalogView.style.display = 'none';
@@ -490,7 +531,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       detailAuthor.textContent = `Tác giả: ${storyData.author || "bống"}`;
       detailSummary.textContent = storyData.excerpt || "Chưa có tóm tắt.";
 
-      // Render danh sách chương
       detailChapterList.innerHTML = "";
       if (storyData.chapters && storyData.chapters.length > 0) {
         storyData.chapters.forEach((chap, idx) => {
@@ -517,7 +557,7 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       }
     });
 
-    // 2. TRANG ĐỌC NỘI DUNG CHƯƠNG (READER)
+    // TRANG ĐỌC NỘI DUNG CHƯƠNG (READER)
     function openReader(chapterIndex) {
       if (!activeStory || !activeStory.chapters[chapterIndex]) return;
 
@@ -558,7 +598,9 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
         try {
           const jsonString = decodeURIComponent(escape(atob(hash)));
           const data = JSON.parse(jsonString);
-          if (data.mode === 'read') {
+          if (data.mode === 'intro') {
+            openIntroDirectly();
+          } else if (data.mode === 'read') {
             activeStory = data.story;
             openReader(data.chapIndex || 0);
           } else {
@@ -631,7 +673,7 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
         title, author, cover, excerpt, chapters
       };
 
-      saveToCatalog(newStory);
+      saveUserStory(newStory);
       closeModal();
       showDetail(newStory);
     });
