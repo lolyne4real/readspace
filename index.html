@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ReadSpace</title>
   
+  <!-- Cấu hình Google Fonts chống lỗi HTTPS GitHub Pages -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
@@ -50,11 +51,7 @@
       --accent-hover: #60a5fa;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-color);
@@ -62,377 +59,137 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       transition: background-color 0.3s ease, color 0.3s ease;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: sticky; top: 0; z-index: 50;
       background-color: var(--card-bg);
       border-bottom: 1px solid var(--border-color);
       padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
+    .brand { font-size: 1.25rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .controls-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .control-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; }
 
-    .controls-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .control-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.875rem;
-    }
-
-    select, button, input {
-      font-family: inherit;
-      font-size: 0.875rem;
-      padding: 6px 12px;
-      border-radius: 6px;
+    select, button, input, textarea {
+      font-family: inherit; font-size: 0.875rem;
+      padding: 6px 12px; border-radius: 6px;
       border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      outline: none;
-      transition: all 0.2s;
+      background-color: var(--bg-color); color: var(--text-color);
+      outline: none; transition: all 0.2s;
     }
+    button { cursor: pointer; }
+    button.btn-primary { background-color: var(--accent-color); color: white; border: none; font-weight: 500; }
+    button.btn-primary:hover { background-color: var(--accent-hover); }
 
-    button.btn-primary {
-      background-color: var(--accent-color);
-      color: white;
-      border: none;
-      font-weight: 500;
-    }
-    button.btn-primary:hover {
-      background-color: var(--accent-hover);
-    }
+    .color-swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+    .color-swatch.active { border-color: var(--accent-color); transform: scale(1.1); }
 
-    .color-swatch {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-    }
-    .color-swatch.active {
-      border-color: var(--accent-color);
-      transform: scale(1.1);
-    }
+    #progressContainer { position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 100; }
+    #progressBar { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.1s ease-out; }
 
-    #progressContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: transparent;
-      z-index: 100;
-    }
-    #progressBar {
-      height: 100%;
-      background: var(--accent-color);
-      width: 0%;
-      transition: width 0.1s ease-out;
-    }
+    main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 24px 80px 24px; }
 
-    main {
-      flex: 1;
-      max-width: 1100px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 40px 24px 80px 24px;
-    }
-
-    /* --- 1. Trang Chủ Catalog --- */
-    .catalog-container { display: block; }
+    /* --- 1. TRANG CHỦ CATALOG (DẠNG THẺ TRUYỆN) --- */
     .catalog-header { margin-bottom: 32px; text-align: center; }
     .catalog-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
     .catalog-subtitle { opacity: 0.75; font-size: 1rem; }
 
     .story-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 24px;
-      margin-top: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px; margin-top: 24px;
     }
 
     .story-card {
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column;
       box-shadow: var(--shadow);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
     }
-    .story-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    .card-cover {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      background-color: var(--border-color);
-    }
-    .card-body {
-      padding: 16px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .card-author { font-size: 0.85rem; opacity: 0.7; margin-bottom: 8px; }
+    .story-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .card-cover { width: 100%; height: 200px; object-fit: cover; background-color: var(--border-color); }
+    .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .card-author { font-size: 0.85rem; opacity: 0.7; margin-bottom: 12px; }
     .card-excerpt {
-      font-size: 0.85rem;
-      line-height: 1.4;
-      opacity: 0.85;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 0.875rem; line-height: 1.5; opacity: 0.85; margin-bottom: 16px; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* --- 2. Trang Thông Tin Tác Phẩm (Chi Tiết) --- */
+    /* --- 2. TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG --- */
     .detail-container {
-      display: none;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 32px;
-      box-shadow: var(--shadow);
+      display: none; background-color: var(--card-bg);
+      border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 32px; box-shadow: var(--shadow);
     }
-
-    .detail-layout {
-      display: flex;
-      gap: 32px;
-    }
-    .detail-cover-box {
-      width: 240px;
-      flex-shrink: 0;
-    }
-    .detail-cover-img {
-      width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-      object-fit: cover;
-    }
-    .detail-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .detail-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-    .detail-meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-    }
-    .meta-item span { opacity: 0.6; display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
-    .meta-item strong { font-weight: 600; }
-
-    .detail-summary-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      opacity: 0.6;
-      margin-bottom: 8px;
-    }
+    .detail-header-layout { display: flex; gap: 32px; margin-bottom: 32px; }
+    .detail-cover-box { width: 220px; flex-shrink: 0; }
+    .detail-cover-img { width: 100%; height: 280px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .detail-info { flex: 1; display: flex; flex-direction: column; }
+    .detail-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    .detail-author { font-size: 0.95rem; opacity: 0.8; margin-bottom: 16px; }
+    .detail-summary-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; opacity: 0.6; margin-bottom: 6px; }
     .detail-summary-text {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      background-color: var(--bg-color);
-      padding: 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 24px;
+      font-size: 0.95rem; line-height: 1.6; background-color: var(--bg-color);
+      padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;
       white-space: pre-wrap;
     }
 
-    .detail-tabs {
-      display: flex;
-      gap: 16px;
-      border-bottom: 2px solid var(--border-color);
-      margin-bottom: 20px;
+    .chapter-section { border-top: 1px solid var(--border-color); padding-top: 24px; }
+    .chapter-section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+    .chapter-list { display: flex; flex-direction: column; gap: 8px; }
+    .chapter-item {
+      padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color);
+      background-color: var(--bg-color); display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: background-color 0.2s, border-color 0.2s;
     }
-    .tab-item {
-      padding: 8px 16px;
-      font-weight: 600;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-    }
-    .tab-item.active {
-      color: var(--accent-color);
-      border-bottom-color: var(--accent-color);
-    }
+    .chapter-item:hover { border-color: var(--accent-color); background-color: var(--card-bg); }
+    .chapter-name { font-weight: 600; font-size: 0.95rem; }
 
-    /* --- 3. Khung Đọc Truyện --- */
-    .reader-container {
-      max-width: 860px;
-      margin: 0 auto;
-      font-family: var(--font-family);
-      font-size: var(--font-size);
-      line-height: var(--line-height);
-      letter-spacing: 0.01em;
-      display: none;
-    }
-    .story-title {
-      font-family: var(--font-family);
-      font-size: 2.25rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      line-height: 1.3;
-      text-align: center;
-    }
-    .story-meta {
-      text-align: center;
-      font-size: 0.9rem;
-      opacity: 0.7;
-      margin-bottom: 24px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+    /* --- 3. TRANG ĐỌC TRUYỆN (READER) --- */
+    .reader-container { max-width: 860px; margin: 0 auto; display: none; }
+    .story-title { font-family: var(--font-family); font-size: 2.25rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+    .story-meta { text-align: center; font-size: 0.9rem; opacity: 0.7; margin-bottom: 24px; }
     .tts-toolbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 40px;
-      padding: 12px;
-      border-radius: 8px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;
+      padding: 12px; border-radius: 8px; background-color: var(--card-bg); border: 1px solid var(--border-color);
     }
-    .story-content {
-      font-family: var(--font-family);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .story-content p {
-      font-family: var(--font-family);
-      margin-bottom: 1.5em;
-      text-align: justify;
-      text-indent: 1.5em;
-    }
+    .story-content { font-family: var(--font-family); font-size: var(--font-size); line-height: var(--line-height); white-space: pre-wrap; word-break: break-word; }
+    .story-content p { margin-bottom: 1.5em; text-align: justify; text-indent: 1.5em; }
+
     .nav-toolbar {
-      margin-top: 60px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
     }
 
     #btnScrollTop {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 90;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background-color: var(--card-bg);
-      color: var(--text-color);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
+      position: fixed; bottom: 28px; right: 28px; z-index: 90; width: 40px; height: 40px;
+      border-radius: 8px; background-color: var(--card-bg); color: var(--text-color);
+      border: 1px solid var(--border-color); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
     }
 
-    /* Modal Editor */
-    .editor-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+    /* MODAL SOẠN THẢO TRUYỆN MỚI */
+    .editor-modal { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
     .editor-modal.open { display: flex; }
-    .editor-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      width: 100%;
-      max-width: 700px;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .editor-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-    }
-    .editor-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      overflow-y: auto;
-    }
+    .editor-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 750px; max-height: 90vh; display: flex; flex-direction: column; }
+    .editor-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .editor-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group label { font-size: 0.875rem; font-weight: 500; }
-    input[type="text"], input[type="file"], textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: inherit;
-    }
-    textarea { min-height: 160px; resize: vertical; line-height: 1.6; }
-    .editor-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
+
+    .chapter-input-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
 
     @media (max-width: 640px) {
-      .detail-layout { flex-direction: column; }
+      .detail-header-layout { flex-direction: column; }
       .detail-cover-box { width: 100%; text-align: center; }
-      .detail-cover-img { max-width: 200px; }
+      .detail-cover-img { max-width: 180px; height: 240px; }
     }
   </style>
 </head>
@@ -443,6 +200,7 @@
   <header>
     <div id="brandLogo" class="brand" title="Quay về trang chủ">📖 ReadSpace</div>
     <div class="controls-group">
+      <button id="btnBackToDetail" style="display: none;">📋 Về trang truyện</button>
       <button id="btnHome" style="display: none;">🏠 Trang chủ</button>
 
       <div class="control-item">
@@ -471,43 +229,41 @@
   </header>
 
   <main>
-    <!-- 1. Trang Chủ Catalog -->
-    <div id="catalogView" class="catalog-container">
+    <!-- 1. TRANG CHỦ CATALOG (Lưới các Thẻ Truyện) -->
+    <div id="catalogView">
       <div class="catalog-header">
         <h1 class="catalog-title">Tủ Truyện</h1>
-        <p class="catalog-subtitle">Chào mừng đến với không gian sáng tác nhỏ của mình!</p>
+        <p class="catalog-subtitle">Chào mừng đến với tủ sách của em bống dốt văn!</p>
       </div>
       <div id="storyGrid" class="story-grid"></div>
     </div>
 
-    <!-- 2. Trang Thông Tin Chi Tiết Tác Phẩm (Đúng chuẩn Hako/OLN) -->
+    <!-- 2. TRANG CHI TIẾT TÁC PHẨM (Thông tin + Danh sách chương) -->
     <div id="detailView" class="detail-container">
-      <div class="detail-tabs">
-        <div class="tab-item active">Thông tin</div>
-      </div>
-      <div class="detail-layout">
+      <div class="detail-header-layout">
         <div class="detail-cover-box">
           <img id="detailCoverImg" class="detail-cover-img" src="" alt="Bìa truyện">
         </div>
         <div class="detail-info">
-          <h1 id="detailTitle" class="detail-title">Mười năm</h1>
+          <h1 id="detailTitle" class="detail-title"></h1>
+          <div id="detailAuthor" class="detail-author"></div>
           
-          <div class="detail-meta-grid">
-            <div class="meta-item"><span>TÁC GIẢ</span><strong id="detailAuthor">bống</strong></div>
-            <div class="meta-item"><span>LOẠI TRUYỆN</span><strong>Truyện sáng tác</strong></div>
-          </div>
+          <div class="detail-summary-title">TÓM TẮT TÁC PHẨM</div>
+          <div id="detailSummary" class="detail-summary-text"></div>
 
-          <div class="detail-summary-title">TÓM TẮT</div>
-          <div id="detailSummary" class="detail-summary-text">Có những con người không còn ở bên ta...</div>
-
-          <div style="display: flex; gap: 12px; margin-top: auto;">
-            <button id="btnStartReading" class="btn-primary" style="padding: 10px 24px; font-size: 1rem;">📖 Đọc Truyện</button>
-          </div>
+          <button id="btnReadFirstChapter" class="btn-primary" style="align-self: flex-start; padding: 10px 20px; font-size: 0.95rem;">
+            📖 Đọc Ngay (Chương 1)
+          </button>
         </div>
+      </div>
+
+      <div class="chapter-section">
+        <div class="chapter-section-title">Danh sách Tập & Chương</div>
+        <div id="detailChapterList" class="chapter-list"></div>
       </div>
     </div>
 
-    <!-- 3. Trang Đọc Truyện (Reader) -->
+    <!-- 3. TRANG ĐỌC TRUYỆN CHI TIẾT (READER) -->
     <div id="readerView" class="reader-container">
       <h1 id="displayTitle" class="story-title"></h1>
       <div id="displayMeta" class="story-meta"></div>
@@ -537,17 +293,17 @@
 
   <button id="btnScrollTop" title="Về đầu trang">▲</button>
 
-  <!-- Modal Editor Đăng Truyện -->
+  <!-- MODAL ĐĂNG TRUYỆN TẠO CARD MỚI -->
   <div id="editorModal" class="editor-modal">
     <div class="editor-card">
       <div class="editor-header">
-        <span>Soạn Thảo Tác Phẩm Mới</span>
+        <span>Tạo Tác Phẩm & Đăng Bài Mới</span>
         <button id="btnCloseModal" style="border:none; background:transparent; font-size:1.2rem;">✕</button>
       </div>
       <div class="editor-body">
         <div class="form-group">
-          <label for="inputTitle">Tiêu đề tác phẩm / Chương</label>
-          <input type="text" id="inputTitle" placeholder="Nhập tiêu đề truyện (ví dụ: Mười năm)...">
+          <label for="inputTitle">Tiêu đề tác phẩm</label>
+          <input type="text" id="inputTitle" placeholder="Nhập tên truyện...">
         </div>
         <div class="form-group">
           <label for="inputAuthor">Tác giả / Bút danh</label>
@@ -558,55 +314,72 @@
           <input type="file" id="inputCoverFile" accept="image/*">
         </div>
         <div class="form-group">
-          <label for="inputCoverUrl">Hoặc dán URL ảnh bìa (Không bắt buộc)</label>
-          <input type="text" id="inputCoverUrl" placeholder="Dán link ảnh (https://...)...">
+          <label for="inputCoverUrl">Hoặc dán URL ảnh bìa</label>
+          <input type="text" id="inputCoverUrl" placeholder="https://...">
         </div>
         <div class="form-group">
-          <label for="inputExcerpt">Tóm tắt tác phẩm (Hiển thị ở trang thông tin)</label>
-          <textarea id="inputExcerpt" style="min-height: 80px;" placeholder="Nhập đoạn tóm tắt tác phẩm..."></textarea>
+          <label for="inputExcerpt">Tóm tắt ngắn (Hiển thị ở Card Trang chủ & Trang thông tin)</label>
+          <textarea id="inputExcerpt" style="min-height: 70px;" placeholder="Nhập 1-2 câu tóm tắt nội dung..."></textarea>
         </div>
-        <div class="form-group">
-          <label for="inputContent">Nội dung truyện</label>
-          <textarea id="inputContent" placeholder="Nhập hoặc dán nội dung câu chuyện vào đây..."></textarea>
+
+        <hr style="border:0; border-top:1px solid var(--border-color); margin: 8px 0;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="font-weight: 600;">Nội dung Các Chương</label>
+          <button id="btnAddChapterInput" class="btn-primary" style="padding: 4px 10px; font-size:0.8rem;">+ Thêm Chương</button>
+        </div>
+
+        <div id="chapterInputsContainer">
+          <div class="chapter-input-card">
+            <input type="text" class="input-chap-title" placeholder="Tên chương" value="Chương 1: Mở đầu">
+            <textarea class="input-chap-content" placeholder="Nội dung chương 1..."></textarea>
+          </div>
         </div>
       </div>
       <div class="editor-footer">
         <button id="btnCancelStory">Hủy</button>
-        <button id="btnSaveStory" class="btn-primary">Đăng & Tạo Link Chia Sẻ</button>
+        <button id="btnSaveStory" class="btn-primary">Đăng & Tạo Card Trang Chủ</button>
       </div>
     </div>
   </div>
 
   <script>
-    const defaultCover = "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=600&q=80";
+    const defaultCover = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
 
+    // DỮ LIỆU THẺ MẶC ĐỊNH TRÊN TRANG CHỦ
     const defaultCatalog = [
       {
-        id: "story_muoi_nam",
-        title: "Mười năm",
+        id: "default_intro_card",
+        title: "Đôi Dòng Giới Thiệu",
         author: "bống",
-        excerpt: "Có những con người không còn ở bên ta, nhưng cũng chưa từng thật sự rời đi. Họ nằm lại trong ký ức như một hòn đá nhỏ, không đủ nặng để khiến ta vấp ngã, nhưng đủ để mỗi khi ánh sáng chiếu vào, ta lại nhìn thấy.\n\nTôi viết lại câu chuyện này không phải để níu kéo, cũng không nhằm để biện minh. Nó được viết để lưu giữ, và để cất đi...",
+        excerpt: "Góc nhỏ chia sẻ những mẩu truyện ngắn hoặc những dự án ma mà mình tự viết được mấy chương rồi để đó.",
         cover: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
-        content: `Có những con người không còn ở bên ta, nhưng cũng chưa từng thật sự rời đi. Họ nằm lại trong ký ức như một hòn đá nhỏ, không đủ nặng để khiến ta vấp ngã, nhưng đủ để mỗi khi ánh sáng chiếu vào, ta lại nhìn thấy.
+        chapters: [
+          {
+            title: "Chương 1: Lời Chào Đầu",
+            content: `Xin chào! Cảm ơn bạn đã ghé thăm trang đọc truyện nhỏ này.
 
-Tôi viết lại câu chuyện này không phải để níu kéo, cũng không nhằm để biện minh. Nó được viết để lưu giữ, và để cất đi.
+Đây là nơi mình dùng để lưu trữ và chia sẻ những dự án, mẩu chuyện ngắn xoay quanh cuộc sống, những chuyến hành trình đơn giản mà mình đã trải qua.
 
-Đó là khoảng thời gian mười năm trôi qua lặng lẽ như một giấc mộng dài...`
+Trang web được thiết kế tối giản, tập trung hoàn toàn vào trải nghiệm đọc thoáng đãng, hỗ trợ chuyển màu nền dịu mắt và đọc thành tiếng. Chúc bạn có những phút giây đọc truyện thật thoải mái!`
+          }
+        ]
       }
     ];
 
     let currentFontSize = 18;
     let audioPlayer = null;
-    let storyId = "";
-    let currentStoryData = null;
     let base64CoverImage = "";
+    
+    let activeStory = null;
+    let activeChapterIndex = 0;
 
     const fontSelect = document.getElementById('fontSelect');
     const btnDecreaseFont = document.getElementById('btnDecreaseFont');
     const btnIncreaseFont = document.getElementById('btnIncreaseFont');
     const swatches = document.querySelectorAll('.color-swatch');
     const progressBar = document.getElementById('progressBar');
-    
+
     const catalogView = document.getElementById('catalogView');
     const detailView = document.getElementById('detailView');
     const readerView = document.getElementById('readerView');
@@ -616,31 +389,37 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
     const detailTitle = document.getElementById('detailTitle');
     const detailAuthor = document.getElementById('detailAuthor');
     const detailSummary = document.getElementById('detailSummary');
-    const btnStartReading = document.getElementById('btnStartReading');
+    const detailChapterList = document.getElementById('detailChapterList');
+    const btnReadFirstChapter = document.getElementById('btnReadFirstChapter');
 
     const displayTitle = document.getElementById('displayTitle');
     const displayMeta = document.getElementById('displayMeta');
     const displayContent = document.getElementById('displayContent');
 
-    const editorModal = document.getElementById('editorModal');
+    const btnHome = document.getElementById('btnHome');
+    const btnBackToDetail = document.getElementById('btnBackToDetail');
+    const btnShare = document.getElementById('btnShare');
     const btnNewStory = document.getElementById('btnNewStory');
+    const brandLogo = document.getElementById('brandLogo');
+
+    const editorModal = document.getElementById('editorModal');
     const btnCloseModal = document.getElementById('btnCloseModal');
     const btnCancelStory = document.getElementById('btnCancelStory');
     const btnSaveStory = document.getElementById('btnSaveStory');
-    const btnShare = document.getElementById('btnShare');
-    const btnHome = document.getElementById('btnHome');
-    const brandLogo = document.getElementById('brandLogo');
+    const btnAddChapterInput = document.getElementById('btnAddChapterInput');
+    const chapterInputsContainer = document.getElementById('chapterInputsContainer');
 
     const inputTitle = document.getElementById('inputTitle');
     const inputAuthor = document.getElementById('inputAuthor');
     const inputCoverFile = document.getElementById('inputCoverFile');
     const inputCoverUrl = document.getElementById('inputCoverUrl');
     const inputExcerpt = document.getElementById('inputExcerpt');
-    const inputContent = document.getElementById('inputContent');
 
     const btnPlayTTS = document.getElementById('btnPlayTTS');
     const btnStopTTS = document.getElementById('btnStopTTS');
     const rateSelect = document.getElementById('rateSelect');
+    const btnPrevChapter = document.getElementById('btnPrevChapter');
+    const btnNextChapter = document.getElementById('btnNextChapter');
     const btnScrollTop = document.getElementById('btnScrollTop');
 
     inputCoverFile.addEventListener('change', (e) => {
@@ -653,7 +432,7 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
     });
 
     function getStoredCatalog() {
-      const stored = localStorage.getItem('user_catalog_stories');
+      const stored = localStorage.getItem('user_catalog_stories_v3');
       if (stored) {
         try { return JSON.parse(stored); } catch (e) {}
       }
@@ -663,29 +442,31 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
     function saveToCatalog(storyObj) {
       const catalog = getStoredCatalog();
       catalog.unshift(storyObj);
-      localStorage.setItem('user_catalog_stories', JSON.stringify(catalog));
+      localStorage.setItem('user_catalog_stories_v3', JSON.stringify(catalog));
       renderCatalog();
     }
 
+    // Hiển thị Lưới Thẻ Truyện trên Trang Chủ
     function renderCatalog() {
       const catalog = getStoredCatalog();
       storyGrid.innerHTML = "";
-      
+
       catalog.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'story-card';
         const coverSrc = item.cover || defaultCover;
 
         card.innerHTML = `
-          <img src="${escapeHtml(coverSrc)}" class="card-cover" alt="Bìa">
+          <img src="${escapeHtml(coverSrc)}" class="card-cover" alt="Bìa truyện">
           <div class="card-body">
             <h3 class="card-title">${escapeHtml(item.title)}</h3>
-            <div class="card-author">Tác giả: ${escapeHtml(item.author || "bống")}</div>
+            <div class="card-author">Tác giả: ${escapeHtml(item.author || "Khuyết danh")}</div>
             <div class="card-excerpt">${escapeHtml(item.excerpt || "")}</div>
+            <button class="btn-primary btn-read-card" style="width: 100%; margin-top: auto;">Đọc Ngay</button>
           </div>
         `;
-        
-        card.addEventListener('click', () => {
+
+        card.querySelector('.btn-read-card').addEventListener('click', () => {
           showDetail(item);
         });
 
@@ -693,7 +474,84 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
       });
     }
 
-    // Router theo Hash URL
+    // 1. TRANG CHI TIẾT TÁC PHẨM (Trang Thứ 2)
+    function showDetail(storyData) {
+      activeStory = storyData;
+      catalogView.style.display = 'none';
+      detailView.style.display = 'block';
+      readerView.style.display = 'none';
+
+      btnHome.style.display = 'inline-block';
+      btnBackToDetail.style.display = 'none';
+      btnShare.style.display = 'inline-block';
+
+      detailCoverImg.src = storyData.cover || defaultCover;
+      detailTitle.textContent = storyData.title || "Chưa có tiêu đề";
+      detailAuthor.textContent = `Tác giả: ${storyData.author || "bống"}`;
+      detailSummary.textContent = storyData.excerpt || "Chưa có tóm tắt.";
+
+      // Render danh sách chương
+      detailChapterList.innerHTML = "";
+      if (storyData.chapters && storyData.chapters.length > 0) {
+        storyData.chapters.forEach((chap, idx) => {
+          const chapDiv = document.createElement('div');
+          chapDiv.className = 'chapter-item';
+          chapDiv.innerHTML = `
+            <span class="chapter-name">${escapeHtml(chap.title || `Chương ${idx + 1}`)}</span>
+            <span style="font-size:0.8rem; opacity:0.6;">Đọc →</span>
+          `;
+          chapDiv.addEventListener('click', () => { openReader(idx); });
+          detailChapterList.appendChild(chapDiv);
+        });
+      } else {
+        detailChapterList.innerHTML = "<div style='opacity:0.6;'>Chưa có chương nào.</div>";
+      }
+
+      const shareUrl = generateShareableURL(storyData, 'info');
+      window.history.pushState(null, null, shareUrl);
+    }
+
+    btnReadFirstChapter.addEventListener('click', () => {
+      if (activeStory && activeStory.chapters && activeStory.chapters.length > 0) {
+        openReader(0);
+      }
+    });
+
+    // 2. TRANG ĐỌC NỘI DUNG CHƯƠNG (READER)
+    function openReader(chapterIndex) {
+      if (!activeStory || !activeStory.chapters[chapterIndex]) return;
+
+      activeChapterIndex = chapterIndex;
+      const chap = activeStory.chapters[chapterIndex];
+
+      catalogView.style.display = 'none';
+      detailView.style.display = 'none';
+      readerView.style.display = 'block';
+
+      btnHome.style.display = 'inline-block';
+      btnBackToDetail.style.display = 'inline-block';
+
+      displayTitle.textContent = chap.title || activeStory.title;
+      displayMeta.textContent = `${activeStory.title} • Tác giả: ${activeStory.author || "bống"}`;
+
+      const paragraphs = (chap.content || "").split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+      displayContent.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+
+      btnPrevChapter.style.visibility = activeChapterIndex > 0 ? 'visible' : 'hidden';
+      btnNextChapter.style.visibility = activeChapterIndex < activeStory.chapters.length - 1 ? 'visible' : 'hidden';
+
+      readerView.style.setProperty('--font-family', fontSelect.value);
+      stopTTS();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const shareUrl = generateShareableURL(activeStory, 'read', chapterIndex);
+      window.history.pushState(null, null, shareUrl);
+    }
+
+    btnPrevChapter.addEventListener('click', () => { openReader(activeChapterIndex - 1); });
+    btnNextChapter.addEventListener('click', () => { openReader(activeChapterIndex + 1); });
+    btnBackToDetail.addEventListener('click', () => { if (activeStory) showDetail(activeStory); });
+
     function loadStoryFromURL() {
       const hash = window.location.hash.substring(1);
       if (hash) {
@@ -701,9 +559,10 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
           const jsonString = decodeURIComponent(escape(atob(hash)));
           const data = JSON.parse(jsonString);
           if (data.mode === 'read') {
-            renderReader(data);
+            activeStory = data.story;
+            openReader(data.chapIndex || 0);
           } else {
-            showDetail(data);
+            showDetail(data.story);
           }
           return;
         } catch (e) {}
@@ -715,7 +574,9 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
       catalogView.style.display = 'block';
       detailView.style.display = 'none';
       readerView.style.display = 'none';
+
       btnHome.style.display = 'none';
+      btnBackToDetail.style.display = 'none';
       btnShare.style.display = 'none';
       btnNewStory.style.display = 'inline-block';
       progressBar.style.width = '0%';
@@ -723,54 +584,8 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
       renderCatalog();
     }
 
-    // Hiển thị Trang Thông Tin Chi Tiết
-    function showDetail(storyData) {
-      currentStoryData = storyData;
-      catalogView.style.display = 'none';
-      detailView.style.display = 'block';
-      readerView.style.display = 'none';
-      btnHome.style.display = 'inline-block';
-      btnShare.style.display = 'inline-block';
-      btnNewStory.style.display = 'inline-block';
-
-      detailCoverImg.src = storyData.cover || defaultCover;
-      detailTitle.textContent = storyData.title || "Tác phẩm chưa tên";
-      detailAuthor.textContent = storyData.author || "bống";
-      detailSummary.textContent = storyData.excerpt || storyData.content.substring(0, 150) + "...";
-
-      const shareUrl = generateShareableURL(storyData, 'info');
-      window.history.pushState(null, null, shareUrl);
-    }
-
-    // Hiển thị Khung Đọc Truyện
-    function renderReader(storyData) {
-      currentStoryData = storyData;
-      catalogView.style.display = 'none';
-      detailView.style.display = 'none';
-      readerView.style.display = 'block';
-      btnHome.style.display = 'inline-block';
-      btnShare.style.display = 'inline-block';
-
-      displayTitle.textContent = storyData.title || "";
-      displayMeta.textContent = storyData.author ? `Tác giả: ${storyData.author}` : "";
-      
-      const paragraphs = storyData.content.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
-      displayContent.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
-
-      readerView.style.setProperty('--font-family', fontSelect.value);
-      stopTTS();
-    }
-
-    btnStartReading.addEventListener('click', () => {
-      if (currentStoryData) {
-        const shareUrl = generateShareableURL(currentStoryData, 'read');
-        window.history.pushState(null, null, shareUrl);
-        renderReader(currentStoryData);
-      }
-    });
-
-    function generateShareableURL(storyObj, mode = 'info') {
-      const data = { ...storyObj, mode };
+    function generateShareableURL(storyObj, mode = 'info', chapIndex = 0) {
+      const data = { story: storyObj, mode, chapIndex };
       const jsonString = JSON.stringify(data);
       const encoded = btoa(unescape(encodeURIComponent(jsonString)));
       return `${window.location.origin}${window.location.pathname}#${encoded}`;
@@ -780,7 +595,47 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // --- Voice TTS ---
+    btnAddChapterInput.addEventListener('click', () => {
+      const chapCount = chapterInputsContainer.children.length + 1;
+      const div = document.createElement('div');
+      div.className = 'chapter-input-card';
+      div.innerHTML = `
+        <input type="text" class="input-chap-title" placeholder="Tên chương" value="Chương ${chapCount}">
+        <textarea class="input-chap-content" placeholder="Nội dung chương ${chapCount}..."></textarea>
+      `;
+      chapterInputsContainer.appendChild(div);
+    });
+
+    btnSaveStory.addEventListener('click', () => {
+      const title = inputTitle.value.trim();
+      const author = inputAuthor.value.trim();
+      const cover = base64CoverImage || inputCoverUrl.value.trim() || defaultCover;
+      const excerpt = inputExcerpt.value.trim();
+
+      const chapCards = chapterInputsContainer.querySelectorAll('.chapter-input-card');
+      const chapters = [];
+
+      chapCards.forEach((card, idx) => {
+        const cTitle = card.querySelector('.input-chap-title').value.trim() || `Chương ${idx + 1}`;
+        const cContent = card.querySelector('.input-chap-content').value.trim();
+        if (cContent) {
+          chapters.push({ title: cTitle, content: cContent });
+        }
+      });
+
+      if (!title) { alert("Vui lòng nhập tên truyện!"); return; }
+      if (chapters.length === 0) { alert("Vui lòng nhập ít nhất 1 chương truyện!"); return; }
+
+      const newStory = {
+        id: 'story_' + Date.now(),
+        title, author, cover, excerpt, chapters
+      };
+
+      saveToCatalog(newStory);
+      closeModal();
+      showDetail(newStory);
+    });
+
     function playTTS() {
       const title = displayTitle.textContent;
       const content = displayContent.innerText;
@@ -818,7 +673,6 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
       btnStopTTS.style.display = 'none';
     }
 
-    // --- Control Events ---
     swatches.forEach(swatch => {
       swatch.addEventListener('click', () => {
         swatches.forEach(s => s.classList.remove('active'));
@@ -844,8 +698,13 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
 
     btnNewStory.addEventListener('click', () => {
       inputTitle.value = ""; inputAuthor.value = ""; inputCoverFile.value = "";
-      inputCoverUrl.value = ""; inputExcerpt.value = ""; inputContent.value = "";
-      base64CoverImage = "";
+      inputCoverUrl.value = ""; inputExcerpt.value = ""; base64CoverImage = "";
+      chapterInputsContainer.innerHTML = `
+        <div class="chapter-input-card">
+          <input type="text" class="input-chap-title" placeholder="Tên chương" value="Chương 1: Mở đầu">
+          <textarea class="input-chap-content" placeholder="Nội dung chương 1..."></textarea>
+        </div>
+      `;
       editorModal.classList.add('open');
     });
 
@@ -853,24 +712,9 @@ Tôi viết lại câu chuyện này không phải để níu kéo, cũng không
     btnCloseModal.addEventListener('click', closeModal);
     btnCancelStory.addEventListener('click', closeModal);
 
-    btnSaveStory.addEventListener('click', () => {
-      const title = inputTitle.value.trim();
-      const author = inputAuthor.value.trim();
-      const cover = base64CoverImage || inputCoverUrl.value.trim() || defaultCover;
-      const excerpt = inputExcerpt.value.trim();
-      const content = inputContent.value.trim();
-
-      if (!content) { alert("Vui lòng nhập nội dung truyện!"); return; }
-
-      const storyObj = { title, author, cover, excerpt, content };
-      saveToCatalog(storyObj);
-      closeModal();
-      showDetail(storyObj);
-    });
-
     btnShare.addEventListener('click', () => {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        alert("Đã sao chép đường dẫn trang thông tin tác phẩm vào bộ nhớ tạm!");
+        alert("Đã sao chép đường dẫn chia sẻ vào bộ nhớ tạm!");
       });
     });
 
