@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ứng Dụng Đọc Truyện</title>
+  <title>ReadSpace - Tủ Truyện</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Times+New+Roman&display=swap" rel="stylesheet">
@@ -21,7 +21,6 @@
       --line-height: 1.8;
     }
 
-    /* Themes */
     [data-theme="cream"] {
       --bg-color: #fbf0d9;
       --text-color: #2b2b2b;
@@ -83,6 +82,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
     }
 
     .controls-group {
@@ -112,10 +112,6 @@
       transition: all 0.2s;
     }
 
-    select:focus, button:focus {
-      border-color: var(--accent-color);
-    }
-
     button.btn-primary {
       background-color: var(--accent-color);
       color: white;
@@ -138,7 +134,6 @@
       transform: scale(1.1);
     }
 
-    /* Reading Progress Bar */
     #progressContainer {
       position: fixed;
       top: 0;
@@ -157,99 +152,111 @@
 
     main {
       flex: 1;
-      max-width: 860px;
+      max-width: 1100px;
       width: 100%;
       margin: 0 auto;
       padding: 40px 24px 80px 24px;
     }
 
-    /* Editor Modal */
-    .editor-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    /* --- Catalog Layout (Trang chủ Bố cục Thẻ) --- */
+    .catalog-container {
+      display: block;
     }
-    .editor-modal.open {
-      display: flex;
+    .catalog-header {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .catalog-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .catalog-subtitle {
+      opacity: 0.75;
+      font-size: 1rem;
     }
 
-    .editor-card {
+    /* Bố cục Lưới Các Thẻ Truyện */
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .story-card {
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      width: 100%;
-      max-width: 700px;
-      max-height: 90vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .story-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-cover {
+      width: 100%;
+      height: 180px;
+      background-color: var(--border-color);
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    .card-body {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .card-author {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+    .card-excerpt {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      opacity: 0.85;
+      margin-bottom: 20px;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
       overflow: hidden;
     }
-
-    .editor-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color);
+    .card-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
+      gap: 8px;
+    }
+    .card-actions button {
+      flex: 1;
     }
 
-    .editor-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group label {
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 200px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-
-    .editor-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    /* Reading Canvas */
+    /* --- Reader Container (Khung đọc truyện) --- */
     .reader-container {
+      max-width: 860px;
+      margin: 0 auto;
       font-family: var(--font-family);
       font-size: var(--font-size);
       line-height: var(--line-height);
       letter-spacing: 0.01em;
-      transition: font-family 0.2s, font-size 0.2s;
+      display: none;
     }
 
     .story-title {
@@ -292,7 +299,6 @@
       text-indent: 1.5em;
     }
 
-    /* Navigation Toolbar (Bottom) */
     .nav-toolbar {
       margin-top: 60px;
       padding-top: 24px;
@@ -304,7 +310,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* Nút ô vuông hình mũi tên lên ở góc dưới bên phải */
     #btnScrollTop {
       position: fixed;
       bottom: 28px;
@@ -324,20 +329,84 @@
       font-size: 1.1rem;
       opacity: 1;
       pointer-events: auto;
-      transition: transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+      transition: transform 0.2s ease, background-color 0.3s ease;
     }
-
     #btnScrollTop:hover {
       border-color: var(--accent-color);
       color: var(--accent-color);
       transform: translateY(-2px);
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      opacity: 0.8;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Modal Editor */
+    .editor-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .editor-modal.open {
+      display: flex;
+    }
+    .editor-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .editor-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+    .editor-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: inherit;
+    }
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    .editor-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
     }
 
     @media (max-width: 640px) {
@@ -367,16 +436,18 @@
 </head>
 <body data-theme="white">
 
-  <!-- Progress Bar Top Header -->
   <div id="progressContainer">
     <div id="progressBar"></div>
   </div>
 
   <header>
-    <div class="brand">
+    <div id="brandLogo" class="brand" title="Quay về trang chủ">
       📖 ReadSpace
     </div>
     <div class="controls-group">
+      <!-- Button Quay về Trang chủ -->
+      <button id="btnHome" style="display: none;">🏠 Trang chủ</button>
+
       <!-- Font Selection -->
       <div class="control-item">
         <select id="fontSelect">
@@ -401,12 +472,24 @@
       </div>
 
       <!-- Actions -->
-      <button id="btnNewStory" class="btn-primary" style="display: none;">+ Đăng Truyện</button>
-      <button id="btnShare" title="Chia sẻ bài viết">🔗 Chia sẻ</button>
+      <button id="btnNewStory" class="btn-primary">+ Đăng Truyện</button>
+      <button id="btnShare" title="Chia sẻ bài viết" style="display: none;">🔗 Chia sẻ</button>
     </div>
   </header>
 
   <main>
+    <!-- Trang Chủ Catalog Bố Cục Dạng Thẻ -->
+    <div id="catalogView" class="catalog-container">
+      <div class="catalog-header">
+        <h1 class="catalog-title">Tủ Truyện Đã Đăng</h1>
+        <p class="catalog-subtitle">Không gian đọc tác phẩm tối giản, thoáng đạt</p>
+      </div>
+      <div id="storyGrid" class="story-grid">
+        <!-- Các card truyện sẽ tự động sinh ra tại đây -->
+      </div>
+    </div>
+
+    <!-- Khung Đọc Truyện Chi Tiết -->
     <div id="readerView" class="reader-container">
       <h1 id="displayTitle" class="story-title"></h1>
       <div id="displayMeta" class="story-meta"></div>
@@ -428,27 +511,21 @@
 
       <div id="displayContent" class="story-content"></div>
 
-      <!-- Navigation Toolbar (Next/Prev) -->
       <div class="nav-toolbar">
         <button id="btnPrevChapter" style="visibility: hidden;">← Chương trước</button>
         <button id="btnNextChapter" style="visibility: hidden;">Chương tiếp →</button>
       </div>
     </div>
-
-    <div id="emptyState" class="empty-state">
-      <h2>Chưa có nội dung truyện</h2>
-      <p style="margin-top: 8px;">Trang web chưa có dữ liệu bài viết.</p>
-    </div>
   </main>
 
-  <!-- Nút ô vuông chuyển lên đầu trang cố định góc phải -->
+  <!-- Nút ô vuông cuộn lên đầu trang -->
   <button id="btnScrollTop" title="Về đầu trang">▲</button>
 
   <!-- Editor Modal -->
   <div id="editorModal" class="editor-modal">
     <div class="editor-card">
       <div class="editor-header">
-        <span>Soạn Thảo Truyện</span>
+        <span>Soạn Thảo Tác Phẩm / Chương Mới</span>
         <button id="btnCloseModal" style="border:none; background:transparent; font-size:1.2rem;">✕</button>
       </div>
       <div class="editor-body">
@@ -459,6 +536,14 @@
         <div class="form-group">
           <label for="inputAuthor">Tác giả / Bút danh</label>
           <input type="text" id="inputAuthor" placeholder="Nhập tên tác giả...">
+        </div>
+        <div class="form-group">
+          <label for="inputCover">Link ảnh bìa (Không bắt buộc)</label>
+          <input type="text" id="inputCover" placeholder="Dán URL ảnh bìa (https://...)...">
+        </div>
+        <div class="form-group">
+          <label for="inputExcerpt">Tóm tắt ngắn / Giới thiệu (Hiển thị ở trang chủ)</label>
+          <input type="text" id="inputExcerpt" placeholder="Nhập 1-2 câu tóm tắt truyện...">
         </div>
         <div class="form-group">
           <label for="inputPrevUrl">Link Chương Trước (Không bắt buộc)</label>
@@ -481,17 +566,22 @@
   </div>
 
   <script>
-    const defaultStory = {
-      title: "Chuyến Xe Đêm Cuối Cùng",
-      author: "Chu Thiên Tân",
-      content: `Thành phố về đêm khoác lên mình một lớp sương mỏng lạnh ngắt. Ánh đèn đường vàng nhạt kéo dài những cái bóng liêu xiêu trên mặt đường ướt đầm sau trận mưa rào ban chiều.
+    // Truyện mẫu mặc định trang chủ
+    const defaultCatalog = [
+      {
+        title: "Chuyến Xe Đêm Cuối Cùng",
+        author: "Chu Thiên Tân",
+        excerpt: "Thành phố về đêm khoác lên mình một lớp sương mỏng lạnh ngắt. Ánh đèn đường vàng nhạt kéo dài những cái bóng liêu xiêu trên mặt đường...",
+        cover: "",
+        content: `Thành phố về đêm khoác lên mình một lớp sương mỏng lạnh ngắt. Ánh đèn đường vàng nhạt kéo dài những cái bóng liêu xiêu trên mặt đường ướt đầm sau trận mưa rào ban chiều.
 
 Tôi đứng ở trạm xe bus quen thuộc, đồng hồ trên điện thoại đã chỉ 11h45 đêm. Đây là chuyến xe cuối cùng trong ngày để trở về nhà. Không khí xung quanh im lìm đến mức tôi có thể nghe thấy rõ tiếng lá khô xào xạc theo từng cơn gió thoảng.
 
 Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động cơ rì rào xé tan bầu không khí tĩnh mịch. Bác tài xế ghé xe vào bến, cánh cửa mở ra phát ra tiếng "két" nhẹ. Tôi bước lên xe, tìm một chỗ ngồi gần cửa sổ và chuẩn bị cho hành trình quen thuộc.`,
-      prevUrl: "",
-      nextUrl: ""
-    };
+        prevUrl: "",
+        nextUrl: ""
+      }
+    ];
 
     let currentFontSize = 18;
     let audioPlayer = null;
@@ -505,11 +595,13 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
     const swatches = document.querySelectorAll('.color-swatch');
     const progressBar = document.getElementById('progressBar');
     
+    const catalogView = document.getElementById('catalogView');
+    const readerView = document.getElementById('readerView');
+    const storyGrid = document.getElementById('storyGrid');
+
     const displayTitle = document.getElementById('displayTitle');
     const displayMeta = document.getElementById('displayMeta');
     const displayContent = document.getElementById('displayContent');
-    const readerView = document.getElementById('readerView');
-    const emptyState = document.getElementById('emptyState');
 
     const editorModal = document.getElementById('editorModal');
     const btnNewStory = document.getElementById('btnNewStory');
@@ -517,9 +609,13 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
     const btnCancelStory = document.getElementById('btnCancelStory');
     const btnSaveStory = document.getElementById('btnSaveStory');
     const btnShare = document.getElementById('btnShare');
+    const btnHome = document.getElementById('btnHome');
+    const brandLogo = document.getElementById('brandLogo');
 
     const inputTitle = document.getElementById('inputTitle');
     const inputAuthor = document.getElementById('inputAuthor');
+    const inputCover = document.getElementById('inputCover');
+    const inputExcerpt = document.getElementById('inputExcerpt');
     const inputPrevUrl = document.getElementById('inputPrevUrl');
     const inputNextUrl = document.getElementById('inputNextUrl');
     const inputContent = document.getElementById('inputContent');
@@ -541,8 +637,61 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
       return 'story_pos_' + Math.abs(hash);
     }
 
+    // --- Quản lý dữ liệu Catalog (LocalStorage) ---
+    function getStoredCatalog() {
+      const stored = localStorage.getItem('user_catalog_stories');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return defaultCatalog;
+    }
+
+    function saveToCatalog(storyObj) {
+      const catalog = getStoredCatalog();
+      catalog.unshift(storyObj);
+      localStorage.setItem('user_catalog_stories', JSON.stringify(catalog));
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const catalog = getStoredCatalog();
+      storyGrid.innerHTML = "";
+      
+      catalog.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'story-card';
+        
+        const shareUrl = generateShareableURL(item.title, item.author, item.content, item.prevUrl, item.nextUrl);
+
+        const coverHtml = item.cover 
+          ? `<img src="${escapeHtml(item.cover)}" class="card-cover" alt="Bìa truyện">`
+          : `<div class="card-cover">📖</div>`;
+
+        card.innerHTML = `
+          ${coverHtml}
+          <div class="card-body">
+            <h3 class="card-title">${escapeHtml(item.title || "Tác phẩm chưa tên")}</h3>
+            <div class="card-author">Tác giả: ${escapeHtml(item.author || "Khuyết danh")}</div>
+            <div class="card-excerpt">${escapeHtml(item.excerpt || item.content.substring(0, 100) + "...")}</div>
+            <div class="card-actions">
+              <button class="btn-primary btn-read-card" data-url="${shareUrl}">Đọc Ngay</button>
+            </div>
+          </div>
+        `;
+        storyGrid.appendChild(card);
+      });
+
+      // Gán sự kiện click nút Đọc Ngay trong card
+      document.querySelectorAll('.btn-read-card').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          window.location.href = e.target.dataset.url;
+        });
+      });
+    }
+
+    // --- Scroll Position ---
     function saveScrollPosition() {
-      if (!storyId) return;
+      if (!storyId || readerView.style.display !== 'block') return;
       const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollableHeight > 0) {
         const scrollPercent = (window.scrollY / scrollableHeight) * 100;
@@ -563,37 +712,41 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
       }
     }
 
+    // --- Core Navigation & Routing ---
     function loadStoryFromURL() {
       const hash = window.location.hash.substring(1);
       
-      if (!hash || window.location.protocol === 'file:') {
-        btnNewStory.style.display = 'inline-block';
-      } else {
-        btnNewStory.style.display = 'none';
-      }
-
       if (hash) {
         try {
           const jsonString = decodeURIComponent(escape(atob(hash)));
           const data = JSON.parse(jsonString);
-          renderStory(data.title, data.author, data.content, data.prevUrl, data.nextUrl);
+          renderReader(data.title, data.author, data.content, data.prevUrl, data.nextUrl);
           return;
         } catch (e) {
           console.error("Lỗi đọc dữ liệu từ URL:", e);
         }
       }
-      renderStory(defaultStory.title, defaultStory.author, defaultStory.content, defaultStory.prevUrl, defaultStory.nextUrl);
+
+      // Không có hash => Hiển thị Trang Chủ Catalog
+      showCatalog();
     }
 
-    function renderStory(title, author, content, prevUrl = "", nextUrl = "") {
-      if (!content || !content.trim()) {
-        readerView.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
-      }
-      
+    function showCatalog() {
+      catalogView.style.display = 'block';
+      readerView.style.display = 'none';
+      btnHome.style.display = 'none';
+      btnShare.style.display = 'none';
+      btnNewStory.style.display = 'inline-block';
+      progressBar.style.width = '0%';
+      stopTTS();
+      renderCatalog();
+    }
+
+    function renderReader(title, author, content, prevUrl = "", nextUrl = "") {
+      catalogView.style.display = 'none';
       readerView.style.display = 'block';
-      emptyState.style.display = 'none';
+      btnHome.style.display = 'inline-block';
+      btnShare.style.display = 'inline-block';
 
       displayTitle.textContent = title || "Không có tiêu đề";
       displayMeta.textContent = author ? `Tác giả: ${author}` : "";
@@ -696,7 +849,7 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
       btnStopTTS.style.display = 'none';
     }
 
-    // --- Controls & Events ---
+    // --- Events & Handlers ---
     window.addEventListener('scroll', saveScrollPosition);
 
     swatches.forEach(swatch => {
@@ -726,9 +879,19 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
       }
     });
 
+    btnHome.addEventListener('click', () => {
+      window.location.hash = "";
+    });
+
+    brandLogo.addEventListener('click', () => {
+      window.location.hash = "";
+    });
+
     btnNewStory.addEventListener('click', () => {
       inputTitle.value = "";
       inputAuthor.value = "";
+      inputCover.value = "";
+      inputExcerpt.value = "";
       inputPrevUrl.value = "";
       inputNextUrl.value = "";
       inputContent.value = "";
@@ -745,6 +908,8 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
     btnSaveStory.addEventListener('click', () => {
       const title = inputTitle.value.trim();
       const author = inputAuthor.value.trim();
+      const cover = inputCover.value.trim();
+      const excerpt = inputExcerpt.value.trim();
       const prevUrl = inputPrevUrl.value.trim();
       const nextUrl = inputNextUrl.value.trim();
       const content = inputContent.value.trim();
@@ -754,22 +919,25 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
         return;
       }
 
-      renderStory(title, author, content, prevUrl, nextUrl);
+      // Lưu thông tin tác phẩm vào tủ truyện trang chủ
+      saveToCatalog({ title, author, cover, excerpt, content, prevUrl, nextUrl });
+
       const shareUrl = generateShareableURL(title, author, content, prevUrl, nextUrl);
       window.history.pushState(null, null, shareUrl);
       closeModal();
+      renderReader(title, author, content, prevUrl, nextUrl);
 
       navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("Truyện đã đăng thành công! Đã sao chép Link chia sẻ vào bộ nhớ tạm.");
+        alert("Đã đăng & lưu vào Trang chủ thành công! Link đọc chia sẻ đã được sao chép vào bộ nhớ tạm.");
       }).catch(() => {
-        alert("Truyện đã đăng thành công! Bạn có thể nhấn nút 'Chia sẻ' để lấy link.");
+        alert("Đã đăng & lưu vào Trang chủ thành công!");
       });
     });
 
     btnShare.addEventListener('click', () => {
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
-        alert("Đã sao chép đường dẫn đọc truyện vào bộ nhớ tạm! Bạn có thể gửi link này cho bất kỳ ai.");
+        alert("Đã sao chép đường dẫn đọc truyện vào bộ nhớ tạm!");
       }).catch(() => {
         prompt("Sao chép đường dẫn bên dưới để chia sẻ:", url);
       });
@@ -783,7 +951,6 @@ Một ánh đèn pha sáng quắc từ xa tiến lại gần. Tiếng động c�
       }
     });
 
-    // Navigation Controls
     btnScrollTop.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
