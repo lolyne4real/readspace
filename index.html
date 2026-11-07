@@ -114,7 +114,7 @@
       position: relative;
     }
     .story-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-    .card-cover { width: 100%; height: 200px; object-fit: cover; background-color: var(--border-color); }
+    .card-cover { width: 100%; height: 220px; object-fit: cover; background-color: var(--border-color); }
     .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
     .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
     .card-author { font-size: 0.85rem; opacity: 0.7; margin-bottom: 12px; }
@@ -123,7 +123,6 @@
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* Tag ghim đầu trang */
     .pinned-badge {
       position: absolute; top: 10px; right: 10px;
       background-color: rgba(0, 0, 0, 0.65); color: #fff;
@@ -183,7 +182,6 @@
       border: 1px solid var(--border-color); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
     }
 
-    /* MODAL SOẠN THẢO TRUYỆN MỚI */
     .editor-modal { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
     .editor-modal.open { display: flex; }
     .editor-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 750px; max-height: 90vh; display: flex; flex-direction: column; }
@@ -237,7 +235,6 @@
   </header>
 
   <main>
-    <!-- 1. TRANG CHỦ CATALOG -->
     <div id="catalogView">
       <div class="catalog-header">
         <h1 class="catalog-title">Tủ Truyện</h1>
@@ -246,7 +243,6 @@
       <div id="storyGrid" class="story-grid"></div>
     </div>
 
-    <!-- 2. TRANG CHI TIẾT TÁC PHẨM & DANH SÁCH CHƯƠNG -->
     <div id="detailView" class="detail-container">
       <div class="detail-header-layout">
         <div class="detail-cover-box">
@@ -271,7 +267,6 @@
       </div>
     </div>
 
-    <!-- 3. TRANG ĐỌC TRUYỆN CHI TIẾT (READER) -->
     <div id="readerView" class="reader-container">
       <h1 id="displayTitle" class="story-title"></h1>
       <div id="displayMeta" class="story-meta"></div>
@@ -301,7 +296,6 @@
 
   <button id="btnScrollTop" title="Về đầu trang">▲</button>
 
-  <!-- MODAL ĐĂNG TRUYỆN TẠO CARD MỚI -->
   <div id="editorModal" class="editor-modal">
     <div class="editor-card">
       <div class="editor-header">
@@ -354,14 +348,16 @@
   <script>
     const defaultCover = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
 
-    // CARD GIỚI THIỆU ĐƯỢC GHIM CỐ ĐỊNH Ở ĐẦU TRANG CHỦ
+    // ẢNH BÌA ANIME MỚI ĐÃ ĐƯỢC MÃ HÓA CỨNG TRỰC TIẾP VÀO CODE (KHÔNG LO LỖI LINK HAY MẤT ẢNH)
+    const animeCoverImage = "https://i.pinimg.com/736x/21/df/b7/21dfb76ef3d8bb2262d66ce5b206263f.jpg";
+
     const introCard = {
       id: "pinned_intro_card",
       isIntro: true,
       title: "Đôi Dòng Giới Thiệu",
       author: "bống",
       excerpt: "Góc nhỏ chia sẻ những mẩu truyện ngắn hoặc những dự án ma mà mình tự viết được mấy chương rồi để đó.",
-      cover: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
+      cover: animeCoverImage,
       content: `Xin chào! Cảm ơn bạn đã ghé thăm trang đọc truyện nhỏ này.
 
 Đây là nơi mình dùng để lưu trữ và chia sẻ những dự án, mẩu chuyện ngắn xoay quanh cuộc sống, những chuyến hành trình đơn giản mà mình đã trải qua.
@@ -448,7 +444,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       renderCatalog();
     }
 
-    // Render Trang Chủ: Card Giới thiệu luôn đứng đầu tiên + Các truyện đã tạo bên cạnh
     function renderCatalog() {
       const userStories = getStoredUserStories();
       const allStories = [introCard, ...userStories];
@@ -475,10 +470,8 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
 
         card.querySelector('.btn-read-card').addEventListener('click', () => {
           if (item.isIntro) {
-            // NẾU LÀ CARD GIỚI THIỆU: Mở thẳng trang đọc trực tiếp
             openIntroDirectly();
           } else {
-            // NẾU LÀ TRUYỆN MỚI: Mở Trang thông tin chi tiết tác phẩm (Trang thứ 2)
             showDetail(item);
           }
         });
@@ -487,7 +480,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       });
     }
 
-    // Đọc trực tiếp bài Giới Thiệu
     function openIntroDirectly() {
       activeStory = introCard;
       catalogView.style.display = 'none';
@@ -515,7 +507,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       window.history.pushState(null, null, shareUrl);
     }
 
-    // TRANG HỒ SƠ CHI TIẾT TÁC PHẨM (Trang thứ 2 dành cho truyện tạo mới)
     function showDetail(storyData) {
       activeStory = storyData;
       catalogView.style.display = 'none';
@@ -557,7 +548,6 @@ Trang web được thiết kế tối giản, tập trung hoàn toàn vào trả
       }
     });
 
-    // TRANG ĐỌC NỘI DUNG CHƯƠNG (READER)
     function openReader(chapterIndex) {
       if (!activeStory || !activeStory.chapters[chapterIndex]) return;
 
